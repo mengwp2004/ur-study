@@ -1,0 +1,57 @@
+{
+  "comment":" This config file uses gustosv ur recommend setting",
+  "id": "gustosv",
+  "description": "Default settings",
+  "engineFactory": "com.actionml.RecommendationEngine",
+  "datasource": {
+    "params" : {
+      "name": "gustosv-data.txt",
+      "appName": "gustosv-test",
+      "eventNames": ["watch", "like", "share","comment","favorite","accuse","dislike"],
+      "minEventsPerUser": 1
+    }
+  },
+  "sparkConf": {
+    "spark.serializer": "org.apache.spark.serializer.KryoSerializer",
+    "spark.kryo.registrator": "org.apache.mahout.sparkbindings.io.MahoutKryoRegistrator",
+    "spark.kryo.referenceTracking": "false",
+    "spark.kryoserializer.buffer": "300m",
+    "es.index.auto.create": "true"
+  },
+  "algorithms": [
+    {
+      "comment": "gustosv popularity based backfill, must add eventsNames",
+      "name": "ur",
+      "params": {
+        "appName": "gustosv-test",
+        "indexName": "gustosv-ur-test-index",
+        "typeName": "items",
+        "comment": "must have data for the first event or the model will not build, other events are optional",
+        "indicators": [
+          {
+            "name": "watch",
+             "maxItemsPerUser": 100000,
+             "maxCorrelatorsPerItem": 50
+          },{
+            "name": "like",
+             "maxItemsPerUser": 100000,
+             "maxCorrelatorsPerItem": 50
+
+          },{
+            "name": "share",
+          },{
+            "name": "comment",
+          },{
+            "name": "favorite",
+          },
+
+        ],
+        "blacklistEvents": ["watch","dislike","accuse"]
+        "availableDateName": "available",
+        "expireDateName": "expires",
+        "dateName": "date",
+        "num": 50
+      }
+    }
+  ]
+}
